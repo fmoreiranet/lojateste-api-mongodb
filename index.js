@@ -1,5 +1,9 @@
 const express = require('express');
 const mongoose = require('mongoose');
+const userRouter = require('./routes/userRoutes');
+
+// import express from "express";
+// import mongoose from "mongoose";
 
 const app = express();
 
@@ -16,7 +20,7 @@ app.get("/", (req, res) => {
     console.log(req);
     res.status(200).json({ message: "Bem vindo!" });
 });
-
+app.use(userRouter);
 
 //Connect Data Base: MondoDB
 const DB_USER = 'lojatestAdmin';
