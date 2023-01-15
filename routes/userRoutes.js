@@ -32,6 +32,38 @@ router.get("/user", async (req, res) => {
     }
 });
 
+router.get("/user/:id", async (req, res) => {
+    try {
+        let idUser = req.params.id;
+        const user = await User.findById(idUser);
+        res.status(200).json(user);
+    } catch (error) {
+        res.status(500).json({ error: 'Erro ao buscar os dados!' });
+    }
+});
+
+
+router.patch("/user/:id", async (req, res) => {
+    try {
+        let idUser = req.params.id;
+        const newUser = monteUser(req);
+        validUser(newUser, false);
+        let result = await User.updateOne({ _id: idUser }, {
+            name: newUser.name,
+            // email: newUser.name,
+            birth_date: newUser.birth_date,
+            photo: newUser.photo,
+        });
+        if (result.matchedCount > 0) {
+            res.status(200).json({ message: "Atualizado!" });
+            return;
+        }
+        throw new Error(`Error ao atualizar!`);
+    } catch (error) {
+        console.error({ error: error.message });
+        res.status(500).json({ error: 'Error ao atualizar!' });
+    }
+});
 
 
 function monteUser(req) {
@@ -52,7 +84,7 @@ function monteUser(req) {
     return user;
 }
 
-function validUser(user) {
+function validUser(user, add = true) {
     let error = [];
     if (!user.name) {
         error.push("Nome");
@@ -61,12 +93,13 @@ function validUser(user) {
         //return;
     }
 
-    if (!user.email) {
-        error.push("E-mail");
-        //throw new Error("Existem campo obrigatórios em branco (Email)!");
-        //res.status(422).send({ error: "Existem campo obrigatórios em branco!" });
-        //return;
-    }
+    if (add)
+        if (!user.email) {
+            error.push("E-mail");
+            //throw new Error("Existem campo obrigatórios em branco (Email)!");
+            //res.status(422).send({ error: "Existem campo obrigatórios em branco!" });
+            //return;
+        }
 
     if (error.length > 0) {
         let messageErro = error.join(", ");
