@@ -1,5 +1,7 @@
+const dotenv = require('Dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
+const userRoutes = require('./routes/userRoutes.js');
 
 const app = express();
 
@@ -15,17 +17,18 @@ app.use(express.json());
 app.get("/", (req, res) => {
     console.log(req);
     res.status(200).json({ message: "Bem vindo!" });
-})
+});
+app.use(userRoutes);
 
 //Connect Data Base: MondoDB
-const DB_USER = 'lojatestAdmin';
-const DB_PASS = encodeURIComponent('ya09S5EMVSLHxQ4s');
-const uri = `mongodb+srv://${DB_USER}:${DB_PASS}@cluster-lojateste.ujwalmk.mongodb.net/?retryWrites=true&w=majority`;
+// const DB_USER = process.env.DB_USER;
+// const DB_PASS = encodeURIComponent(process.env.DB_PASS);
+// const uri = `mongodb+srv://${DB_USER}:${DB_PASS}@cluster-lojateste.ujwalmk.mongodb.net/?retryWrites=true&w=majority`;
 
-const uriLocal = `mongodb://127.0.0.1:27017/lojateste`;
+const uri = process.env.DB_URI;
 
 mongoose.set('strictQuery', false);
-mongoose.connect(uriLocal)
+mongoose.connect(uri)
     .then(res => {
         console.log("Conectado!");
         //Listen
