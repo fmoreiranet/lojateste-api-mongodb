@@ -91,6 +91,31 @@ router.delete("/user/:id", async (req, res) => {
     }
 });
 
+router.post("/user/login", async (req, res) => {
+    try {
+        const { email, password } = req.body;
+        if (!email) {
+            return res.status(422).json({ error: 'E-mail obrigatório!' });
+        }
+        if (!password) {
+            return res.status(422).json({ error: 'Senha obrigatório!' });
+        }
+        const user = await User.findOne({ email: email });
+
+        if (!user) {
+            return res.status(422).json({ error: 'Erro ao entrar!' });
+        }
+
+        if (password == user.password)
+            res.status(200).json({ mensagem:})
+
+    } catch (error) {
+
+    }
+
+
+})
+
 
 //Admin 
 router.post("/user/restore", async (req, res) => {
@@ -120,6 +145,7 @@ function monteUser(req) {
     const {
         name,
         email,
+        password,
         birth_date,
         photo,
         roles,
@@ -129,6 +155,7 @@ function monteUser(req) {
     const user = {
         name,
         email,
+        password,
         birth_date,
         photo,
         roles,
@@ -147,13 +174,20 @@ function validUser(user, add = true) {
         //return;
     }
 
-    if (add)
+    if (add) {
         if (!user.email) {
             error.push("E-mail");
             //throw new Error("Existem campo obrigatórios em branco (Email)!");
             //res.status(422).send({ error: "Existem campo obrigatórios em branco!" });
             //return;
         }
+        if (!user.password) {
+            error.push("Senha");
+            //throw new Error("Existem campo obrigatórios em branco (Email)!");
+            //res.status(422).send({ error: "Existem campo obrigatórios em branco!" });
+            //return;
+        }
+    }
 
     if (error.length > 0) {
         let messageErro = error.join(", ");
@@ -167,5 +201,6 @@ async function verifyUserEmail(emailUser) {
         throw new Error('Erro ao cadastrar ou usuário já cadastrado!');
     }
 }
+
 
 module.exports = router;
