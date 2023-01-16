@@ -9,6 +9,10 @@ const User = mongoose.model("User", {
     },
     birth_date: Date,
     photo: String,
+    roles: {
+        type: Number,
+        default: 1,//client = 1 or admin = 0
+    },
     active: {
         type: Boolean,
         default: true
