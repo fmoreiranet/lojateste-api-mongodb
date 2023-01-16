@@ -1,15 +1,15 @@
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
 
 const User = mongoose.model("User", {
     name: String,
     email: {
         type: String,
-        unique: true
+        unique: true,
+        required: true,
     },
-    pass: String,
-    foto: String,
-    data_nasc: Date,
-    ative: {
+    birth_date: Date,
+    photo: String,
+    active: {
         type: Boolean,
         default: true
     }
