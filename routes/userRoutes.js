@@ -3,6 +3,7 @@
 
 const router = require('express').Router();
 const User = require('../models/User');
+const auth = require('../services/auth');
 
 // Create
 router.post("/user", async (req, res) => {
@@ -10,12 +11,13 @@ router.post("/user", async (req, res) => {
         const newUser = monteUser(req);
         validUser(newUser);
         await verifyUserEmail(newUser.email);
+        newUser.password = await auth.createNewPass(newUser.password);
         let result = await User.create(newUser);
         if (result.id) {
             res.status(200).json({ message: "Cadastrado!" });
             return;
         }
-        throw new Error(`Error ao cadastrar!`);
+        throw new Error('Error ao cadastrar!');
     } catch (error) {
         console.error({ error: error.message });
         res.status(500).json({ error: 'Erro ao cadastrar ou usuário já cadastrado!' });
@@ -61,7 +63,7 @@ router.patch("/user/:id", async (req, res) => {
             res.status(200).json({ message: "Atualizado!" });
             return;
         }
-        throw new Error(`Error ao atualizar!`);
+        throw new Error('Error ao atualizar!');
     } catch (error) {
         console.error({ error: error.message });
         res.status(500).json({ error: 'Error ao atualizar!' });
@@ -74,7 +76,7 @@ router.delete("/user/:id", async (req, res) => {
         let idUser = req.params.id;
         const user = await User.findOne({ _id: idUser, active: true });
         if (!user) {
-            throw new Error(`Error ao remover!`);
+            throw new Error('Error ao remover!');
         }
 
         // const result = await User.deleteOne({ _id: idUser });
@@ -84,7 +86,7 @@ router.delete("/user/:id", async (req, res) => {
             res.status(200).json({ message: "Removido!" });
             return;
         }
-        throw new Error(`Error ao remover!`);
+        throw new Error('Error ao remover!');
     } catch (error) {
         console.error({ error: error.message });
         res.status(500).json({ error: 'Error ao remover!' });
@@ -98,7 +100,7 @@ router.post("/user/restore", async (req, res) => {
         let idUser = req.body._id;
         const user = await User.findOne({ _id: idUser, active: false });
         if (!user) {
-            throw new Error(`Error ao remover!`);
+            throw new Error('Error ao remover!');
         }
 
         // const result = await User.deleteOne({ _id: idUser });
@@ -108,7 +110,7 @@ router.post("/user/restore", async (req, res) => {
             res.status(200).json({ message: "Restaurado!" });
             return;
         }
-        throw new Error(`Error ao remover!`);
+        throw new Error('Error ao remover!');
     } catch (error) {
         console.error({ error: error.message });
         res.status(500).json({ error: 'Error ao restaurar!' });
@@ -116,10 +118,41 @@ router.post("/user/restore", async (req, res) => {
 });
 
 
+router.post("/user/login", async (req, res) => {
+    const { email, password } = req.body;
+
+    // validations
+    if (!email) {
+        return res.status(422).json({ msg: "O email é obrigatório!" });
+    }
+
+    if (!password) {
+        return res.status(422).json({ msg: "A senha é obrigatória!" });
+    }
+
+    // check if user exists
+    const user = await User.findOne({ email: email });
+
+    if (!user) {
+        return res.status(404).json({ msg: "Usuário não encontrado!" });
+    }
+
+    try {
+        // check if password match
+        await auth.comparePass(password, user.password);
+        let token = auth.createToken(res, user);
+        res.set("x-access-token", token);
+        res.status(200).json({ message: "Autenticação realizada com sucesso!", token });
+    } catch (error) {
+        res.status(500).json({ msg: error });
+    }
+});
+
 function monteUser(req) {
     const {
         name,
         email,
+        password,
         birth_date,
         photo,
         roles,
@@ -129,6 +162,7 @@ function monteUser(req) {
     const user = {
         name,
         email,
+        password,
         birth_date,
         photo,
         roles,
@@ -157,7 +191,7 @@ function validUser(user, add = true) {
 
     if (error.length > 0) {
         let messageErro = error.join(", ");
-        throw new Error(`Existem campo obrigatórios em branco:  ${messageErro}!`);
+        throw new Error('Existem campo obrigatórios em branco:  ${messageErro}!');
     }
 }
 

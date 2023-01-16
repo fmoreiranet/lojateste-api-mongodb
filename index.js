@@ -1,6 +1,8 @@
 const dotenv = require('Dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
+const auth = require('./services/auth.js');
+
 const userRoutes = require('./routes/userRoutes.js');
 
 const app = express();
@@ -14,11 +16,13 @@ app.use(
 app.use(express.json());
 
 //Rotas Express
-app.get("/", (req, res) => {
+app.get("/", auth.checkToken, (req, res) => {
     console.log(req);
     res.status(200).json({ message: "Bem vindo!" });
 });
 app.use(userRoutes);
+
+
 
 //Connect Data Base: MondoDB
 // const DB_USER = process.env.DB_USER;
