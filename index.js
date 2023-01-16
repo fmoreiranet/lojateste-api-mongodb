@@ -1,6 +1,7 @@
 const dotenv = require('Dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
+const auth = require('./services/auth');
 const userRoutes = require('./routes/userRoutes.js');
 
 const app = express();
@@ -14,7 +15,7 @@ app.use(
 app.use(express.json());
 
 //Rotas Express
-app.get("/", (req, res) => {
+app.get("/", auth.checkToken, (req, res) => {
     console.log(req);
     res.status(200).json({ message: "Bem vindo!" });
 });

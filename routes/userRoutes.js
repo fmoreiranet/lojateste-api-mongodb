@@ -2,6 +2,7 @@
 // const router = express.Router();
 
 const router = require('express').Router();
+const auth = require('../services/auth');
 const User = require('../models/User');
 
 // Create
@@ -10,6 +11,7 @@ router.post("/user", async (req, res) => {
         const newUser = monteUser(req);
         validUser(newUser);
         await verifyUserEmail(newUser.email);
+        newUser.password = await auth.createNewPass(newUser.password);
         let result = await User.create(newUser);
         if (result.id) {
             res.status(200).json({ message: "Cadastrado!" });
@@ -106,11 +108,12 @@ router.post("/user/login", async (req, res) => {
             return res.status(422).json({ error: 'Erro ao entrar!' });
         }
 
-        if (password == user.password)
-            res.status(200).json({ mensagem:})
-
+        await auth.comparePass(password, user.password);
+        const token = await auth.createToken(res, user);
+        res.status(200).json({ message: "Logado!", token: token });
     } catch (error) {
-
+        console.error("Error:", error.message);
+        res.status(401).json({ error: "Error ao entrar!" })
     }
 
 
