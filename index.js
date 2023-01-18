@@ -1,6 +1,8 @@
 const dotenv = require('Dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
+var cors = require('cors')
+
 const auth = require('./services/auth.js');
 
 const userRoutes = require('./routes/userRoutes.js');
@@ -14,6 +16,7 @@ app.use(
     })
 );
 app.use(express.json());
+app.use(cors());
 
 //Rotas Express
 app.get("/", auth.checkToken, (req, res) => {
@@ -41,3 +44,4 @@ mongoose.connect(uri)
     .catch(err => {
         console.error("Error Connect: ", err);
     });
+
