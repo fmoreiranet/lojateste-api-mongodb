@@ -3,7 +3,7 @@
     "public": true,
     "installCommand": "npm cache clean --force && npm install",
     "build": {
-        "src": "index.js",
+        "src": "./index.js",
         "use": "@vercel/node"
     },
     "routes": [
