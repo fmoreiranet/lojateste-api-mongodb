@@ -1,6 +1,6 @@
 const express = require('express');
 const mongoose = require('mongoose');
-const cors = require('cors');
+
 const dotenv = require('dotenv').config();
 
 const auth = require('./services/auth');
@@ -16,7 +16,6 @@ app.use(
     })
 );
 app.use(express.json());
-app.use(cors());
 
 //Rotas Express
 app.get("/", (req, res) => {
