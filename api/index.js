@@ -1,11 +1,11 @@
 const dotenv = require('Dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
-var cors = require('cors')
+var cors = require('cors');
 
-const auth = require('./services/auth.js');
+const auth = require('../services/auth');
 
-const userRoutes = require('./routes/userRoutes.js');
+const userRoutes = require('../routes/userRoutes.js');
 
 const app = express();
 
@@ -39,7 +39,7 @@ mongoose.connect(uri)
     .then(res => {
         console.log("Conectado!");
         //Listen
-        app.listen(3000);
+        app.listen(process.env.PORT || 3000);
     })
     .catch(err => {
         console.error("Error Connect: ", err);
