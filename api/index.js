@@ -19,7 +19,7 @@ app.use(express.json());
 app.use(cors());
 
 //Rotas Express
-app.get("/", auth.checkToken, (req, res) => {
+app.get("/", (req, res) => {
     console.log(req);
     res.status(200).json({ message: "Bem vindo!" });
 });
