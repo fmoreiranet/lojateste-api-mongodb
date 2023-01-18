@@ -2,11 +2,11 @@
   "name": "lojateste-api",
   "version": "1.0.0",
   "description": "Loja teste para criacao de APIs",
-  "main": "api/index.js",
+  "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node .",
-    "dev": "nodemon api/index.js localhost"
+    "start": "node index.js",
+    "dev": "nodemon index.js localhost"
   },
   "author": "Fabiano Moreira",
   "license": "ISC",
