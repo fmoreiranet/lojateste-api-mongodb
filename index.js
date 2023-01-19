@@ -3,6 +3,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const auth = require('./services/auth');
 const userRoutes = require('./routes/userRoutes.js');
+const cors = require('cors');
 
 const app = express();
 
@@ -13,6 +14,7 @@ app.use(
     })
 );
 app.use(express.json());
+app.use(cors());
 
 //Rotas Express
 app.get("/", auth.checkToken, (req, res) => {
