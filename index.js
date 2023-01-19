@@ -38,7 +38,7 @@ mongoose.connect(uri)
     .then(res => {
         console.log("Conectado!");
         //Listen
-        app.listen(process.env.PORT || 3000);
+        app.listen(process.env.PORT || 8000);
     })
     .catch(err => {
         console.error("Error Connect: ", err);
